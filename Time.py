@@ -29,28 +29,28 @@ def days_diff(d1: datetime.date, d2: datetime.date) -> int:
 
     return (d2 - d1).days
 
-def dmy_to_excel_serial(n_day: int, n_mon: int, n_year: int) -> int:
+def dmy_to_excel_serial(dd: int, m: int, y: int) -> int:
     """
     Convert a date (day, month, year) to an Excel serial number.
     Compensate for the 1900 leap year bug present in Excel.
     """
     # Excel bug for 29-Feb-1900. 1900 is not a leap year, but 
     # Excel/Lotus 123 think it is
-    if n_day == 29 and n_mon == 2 and n_year == 1900:
+    if dd == 29 and m == 2 and y == 1900:
         return 60
     
-    serial = (
-        (1461 * (n_year + 4800 + ((n_mon - 14) / 12))) /4 +
-        (367 * (n_mon - 2 -12 * ((n_mon - 14) / 12))) / 12 -
-        (3 * ((n_year + 4900 + ((n_mon - 14) / 12)) / 100)) / 4
-    )
-
-    if serial < 60:
-        serial -= 1
+    d = datetime.date(y, m, dd)
+    excel_base = datetime.date(1899, 12, 31)
+    serial = (d - excel_base).days
+    
+    # Excel inserts a phantom leap-day on Feb 29, 1900,
+    # so bump every date from Mar 1, 1900 onward by +1
+    if d >= datetime.date(1900, 3, 1):
+        serial += 1
     
     return serial
 
-def date_to_excel_serial(d: datetime.date) -> float:
+def date_to_excel_serial(d: datetime.date) -> int:
     """
     Convert a Python date into Excel serial date number as a float.
     Excel stores dates as the number of days since 1899-12-31,
@@ -58,9 +58,31 @@ def date_to_excel_serial(d: datetime.date) -> float:
     a phantom 29-Feb-1900.  This function:
         1. Compute the true day count from 1899-12-31 → d.
         2. Add 1 extra day for all dates on or after 1900-03-01
-    to replicate Excel’s bogus leap‐year behavior.
+    to replicate Excel leap year behavior.
     """
-    return float(dmy_to_excel_serial(d.day, d.month, d.year))
+    return dmy_to_excel_serial(d.day, d.month, d.year)
+
+def excel_serial_to_dmy(serial: int) -> Tuple[int, int, int]:
+    """
+    Convert an Excel serial date back into a date (day, month, year)
+    This is the reverse of dmy_to_excel_serial.
+    """
+    # Excel bug for 29-Feb-1900. 1900 is not a leap year, but 
+    # Excel/Lotus 123 think it is
+    base = datetime.date(1899, 12, 31)
+    if serial == 60:
+        return (29, 2, 1900)
+    if serial > 60:
+        serial -= 1
+    real_date = base + datetime.timedelta(days=serial)
+    return (real_date.day, real_date.month, real_date.year)
+
+def excel_serial_to_date(serial: int) -> datetime.date:
+    """
+    Convert an Excel serial date back into a datetime.date object
+    """
+    dd, m, y = excel_serial_to_dmy(serial)
+    return datetime.date(y, m, dd)
 
 def days_in_year(y:int) -> float
     """
@@ -281,8 +303,18 @@ def business_day_adjust(d: datetime.date, bda = 0: int) -> datetime.date:
         else:
             return pd
 
+def first_imm_date(d: datetime.date, freq = 1: int) -> datetime.date:
+    """
+    Find the first IMM date AFTER the valuation date.
+    IMM dates are always the 20th of Mar/Jun/Sep/Dec.
 
-
-
-
+    Inputs:
+        d (datetime.date): the valuation date
+        freq (int): the number of quarters to step forward, default to 1
+    """
+    y = d.year
+    imm = datetime.date(y, 3, 20)
+    while imm <= d:
+        imm = add_months(imm, 3 * freq)
+    return imm
 
