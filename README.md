@@ -1,2 +1,2 @@
 # Loan-Pricing-Project
-This is for my internship project at SocGen CPM group - Summer 2025
+This is for my internship project at SocGen CPM/CLS group - Summer 2025
