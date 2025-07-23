@@ -84,7 +84,7 @@ def excel_serial_to_date(serial: int) -> datetime.date:
     dd, m, y = excel_serial_to_dmy(serial)
     return datetime.date(y, m, dd)
 
-def days_in_year(y:int) -> float
+def days_in_year(y:int) -> float:
     """
     365 or 366 depending on leap year
     """
@@ -266,7 +266,7 @@ def prev_business_day(d: datetime.date) -> datetime.date:
         d -= datetime.timedelta(days=1)
     return d
 
-def business_day_adjust(d: datetime.date, bda = 0: int) -> datetime.date:
+def business_day_adjust(d: datetime.date, bda: int =0) -> datetime.date:
     """
     business day adjustment:
         0: no change (default case)
@@ -303,7 +303,7 @@ def business_day_adjust(d: datetime.date, bda = 0: int) -> datetime.date:
         else:
             return pd
 
-def first_imm_date(d: datetime.date, freq = 1: int) -> datetime.date:
+def first_imm_date(d: datetime.date, freq: int = 1) -> datetime.date:
     """
     Find the first IMM date AFTER the valuation date.
     IMM dates are always the 20th of Mar/Jun/Sep/Dec.
