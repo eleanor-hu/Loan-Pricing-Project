@@ -8,12 +8,12 @@ from Time import (
     sub_months,
     days_diff,
     business_day_adjust,
-    first_imm_date,
+    first_imm_date
 )
 
 def set_df_calendar(vd: date, 
-                    dates: List[date],
-                    dcc: int) -> Tuple[List[float], List[float]]:
+                    dates: list[date],
+                    dcc: int) -> tuple[list[float], list[float]]:
     """
     Set up a schedule for discount factor calculations. Given a value date
     and a list of future cashflow dates, this function calculates the time 
@@ -105,7 +105,7 @@ def get_loan_period(sd: date, vd: date, ed: date, freq: int, gen: int) -> int:
         return 0
 
 def set_loan_calendar(sd: date, vd: date, ed: date, freq: int, dcc: int, 
-    bda: int, gen: int, n: int) -> Tuple[List[date], List[float], List[float]]:
+    bda: int, gen: int, n: int) -> tuple[list[date], list[float], list[float]]:
     """
     Generate a full payment schedule for a loan.
 
@@ -117,7 +117,7 @@ def set_loan_calendar(sd: date, vd: date, ed: date, freq: int, dcc: int,
         ddc (int): day count convention code
         bda (int): business day adjustment convention
         gen (int): generation method
-        n (int): number of periods, calculated from get_laon_period
+        n (int): number of periods, calculated from get_loan_period
     
     Returns (tuple[list, list, list]):
         dates (list[date]): the schedule of payment dates
@@ -158,7 +158,7 @@ def set_loan_calendar(sd: date, vd: date, ed: date, freq: int, dcc: int,
     return dates, interv, cumul
 
 def set_default_intensities_calendar(vd: date, freq: int, dcc: int, bda: int, 
-    imm: int, spread: int) -> Tuple[List[date], List[float], List[float]]:
+    imm: int, spread: int) -> tuple[list[date], list[float], list[float]]:
     """
     Generate a schedule of dates for default intensity
 
