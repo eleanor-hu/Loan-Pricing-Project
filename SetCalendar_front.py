@@ -43,9 +43,9 @@ def get_intensities_calendar_output(vd, freq, dcc, bda, spread, imm, choice):
     if choice == 0:
         return dates
     elif choice == 1:
-        return dt
+        return interv
     elif choice == 2:
-        return elapsed_time
+        return cumul
     else:
         return []
 
@@ -103,7 +103,7 @@ def get_cashflow_calendar_output(sd, vd, ed, freq, dcc, bda, gen, choice):
     dates, interv, cumul = set_loan_calendar(
         sd, vd, ed, int(freq), int(dcc), int(bda), int(gen), n
     )
-     if choice == 0:
+    if choice == 0:
         return dates
     elif choice == 1:
         return interv
@@ -155,7 +155,7 @@ def cashflow_cumul(sd_serial, vd_serial, ed_serial, freq, dcc, bda, gen):
     return cumul
 
 @xw.func
-def date_to_term(start_serial, end_serial, dcc):
+def xls_date_to_term(start_serial, end_serial, dcc):
     """
     Return the day count between two dates using DCC
     """

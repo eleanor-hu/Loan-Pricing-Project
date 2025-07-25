@@ -119,6 +119,8 @@ def add_years(d: datetime.date, years: int) -> datetime.date:
             dd = 28
         else:
             dd = 29
+    else:
+        dd = d.day
     return datetime.date(y, d.month, dd)
 
 def day_count(d1: datetime.date, d2: datetime.date, dcc: int) -> float:
@@ -195,7 +197,7 @@ def day_count(d1: datetime.date, d2: datetime.date, dcc: int) -> float:
             return (y2 - y1) + day_count(pivot, d2, dcc)
         elif m2 < m1:
             pivot = datetime.date(y2 - 1, m1, dd1)
-            return (d2.tm_year) + day_count(pivot, d2, dcc)
+            return (y2 - y1 - 1) + day_count(pivot, d2, dcc)
 
     # Case 4: 30/365
     elif dcc == 4:
@@ -210,8 +212,8 @@ def day_count(d1: datetime.date, d2: datetime.date, dcc: int) -> float:
             # different month, day1 <= day2
             elif dd1 <= dd2:
                 return (30 * (m2 - m1) + (dd2 - dd1)) / 365.0
-            # different month, day2 > day1
-            elif dd2 > dd1:
+            # different month, day1 > day2
+            elif dd1 > dd2:
                 pivot = datetime.date(y2, m2, dd1)
                 pivot = add_months(pivot, -1)
                 return (30 * (m2 - m1 - 1) + days_diff(pivot, d2)) / 365.0
@@ -231,7 +233,7 @@ def day_count(d1: datetime.date, d2: datetime.date, dcc: int) -> float:
             return (y2 - y1) + day_count(pivot, d2, dcc)
         elif m2 < m1:
             pivot = datetime.date(y2 - 1, m1, dd1)
-            return (y2 - y1 - 1) + day_count(pivot, d2, ddc)
+            return (y2 - y1 - 1) + day_count(pivot, d2, dcc)
     
     # Case 5: 30/360 with annualized adjustment for leap year
     elif dcc == 5:
@@ -246,7 +248,7 @@ def day_count(d1: datetime.date, d2: datetime.date, dcc: int) -> float:
             beg = datetime.date(y2, 1, 1)
             return (
                 (y2 - y1 - 1) + 
-                day_count(d1, end,3) * 360.0 / days_in_year(y1) + 
+                day_count(d1, end, 3) * 360.0 / days_in_year(y1) + 
                 day_count(beg, d2, 3) * 360.0 / days_in_year(y2)
             )
 
@@ -297,7 +299,7 @@ def business_day_adjust(d: datetime.date, bda: int =0) -> datetime.date:
     
     # modified previous
     if bda == 4:
-        pd = previous_business_day(d)
+        pd = prev_business_day(d)
         if pd.month != d.month:
             return next_business_day(d)
         else:

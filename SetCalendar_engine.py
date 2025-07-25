@@ -36,7 +36,7 @@ def set_df_calendar(vd: date,
      # first period (valuation date)
     interv[0] = day_count(vd, dates[0], dcc)
     cumul[0] = 0.0
-    cumul[1] = dt[0]
+    cumul[1] = interv[0]
 
     # remaining periods
     for i in range(1, n):
