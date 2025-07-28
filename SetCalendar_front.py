@@ -249,6 +249,3 @@ def generate_tenor_cashflows(sd_serial, vd_serial, ed_serial, freq, dcc,
 
     return cash_flows
 
-
-
-
